@@ -5,6 +5,18 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { TimePicker } from '@mui/x-date-pickers/TimePicker'
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material'
 
+function getMobilePlatform(): 'iOS' | 'Android' | 'Other' {
+	const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
+  
+	if (/iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream) {
+	  return 'iOS';
+	}
+	if (/android/i.test(ua)) {
+	  return 'Android';
+	}
+	return 'Other';
+  }
+  
 
 
 function pad2(n: number): string { return String(n).padStart(2, '0') }
@@ -176,6 +188,10 @@ export default function App() {
 		return result.slice(firstMeetIdx, Math.min(result.length, firstMeetIdx + 3))
 	}, [sleepStartMins, fallAsleepMins, minSleepHours])
 
+	const platform = getMobilePlatform();
+
+
+
 	return (
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
@@ -265,6 +281,7 @@ export default function App() {
 				<div className="row">
 				<div className="time-display" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
   <span className="time-primary">Calculated alarms</span>
+  {platform === 'iOS' && (
   <button
     onClick={() => setShowShortcutInfo(true)}
     className="info-icon"
@@ -272,27 +289,34 @@ export default function App() {
   >
     ℹ️
   </button>
+  )}
 </div>
 				</div>
 
 				{suggestions.map((s, idx) => {
-				const wakeTime = minutesToClockLabel(s.wakeMins) // e.g. "07:30"
-				const shortcutLink = `shortcuts://run-shortcut?name=remcalc&input=${encodeURIComponent(wakeTime)}`
-				return (
-					<div key={idx} className="item">
-					<div>
-						<div className="time">{wakeTime}</div>
-						<div className="meta">{s.n} × 90m cycles</div>
-					</div>
-					<div className="row" style={{ gap: 8, alignItems: "center" }}>
-						<span className="pill pill-darkblue">{formatDuration(s.totalSleepMins)}</span>
-						<a href={shortcutLink} className="pill pill-blue">
-						Set ⏰
-						</a>
-					</div>
-					</div>
-				)
-				})}
+  const wakeTime: string = minutesToClockLabel(s.wakeMins); // ensure string
+
+  return (
+    <div key={idx} className="item">
+      <div>
+        <div className="time">{wakeTime}</div>
+        <div className="meta">{s.n} × 90m cycles</div>
+      </div>
+      <div className="row" style={{ gap: 8, alignItems: 'center' }}>
+        <span className="pill pill-darkblue">{formatDuration(s.totalSleepMins)}</span>
+
+        {platform === 'iOS' && (
+          <a
+            className="pill pill-blue"
+            href={`shortcuts://run-shortcut?name=remcalc&input=${encodeURIComponent(wakeTime)}`}
+          >
+            Set ⏰
+          </a>
+        )}
+      </div>
+    </div>
+  );
+})}
 				{showShortcutInfo && (
   <div className="modal">
     <div className="modal-content">
@@ -305,11 +329,8 @@ export default function App() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            remcalc Shortcut 
-          </a>
-        </li>
-        <li>
-          In iOS: go to <b>Settings → Shortcuts → Allow Untrusted Shortcuts</b>
+            remcalc Shortcut
+          </a> 👈🏻
         </li>
         <li>
           After that, the ⏰ buttons here will open your Clock app and set alarms.
