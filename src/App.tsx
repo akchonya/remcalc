@@ -193,11 +193,11 @@ export default function App() {
 			<div className="card">
 				{/* <h3>1) Sleep start</h3> */}
 				<div className="section">
-					<div className="time-display">
-						<span className="time-primary">{minutesToClockLabel(sleepStartMins)}</span>
-						<span className="time-secondary">Selected time</span>
-					</div>
-					<div className="row row-nowrap" style={{ alignItems: 'center', gap: 12 }}>
+					
+					<div className="control fit-row" style={{ alignItems: 'center' }}>
+						<label>Sleep start</label>
+						<div className="segmented segmented-nowrap">
+						<div className="row row-nowrap" style={{ alignItems: 'center', gap: 12 }}>
 						<div style={{ flex: 1, minWidth: 0 }}>
 							<LocalizationProvider dateAdapter={AdapterDayjs}>
 								<TimePicker
@@ -208,13 +208,15 @@ export default function App() {
 										const minutes = v.hour() * 60 + v.minute()
 										setSleepStartMins(minutes % 1440)
 									}}
-									slotProps={{ textField: { fullWidth: true, size: 'small', variant: 'outlined' } }}
+									slotProps={{ textField: { style: { width: 120 }, size: 'small', variant: 'outlined' } }}
 								/>
 							</LocalizationProvider>
 						</div>
 						<button className="btn secondary compact" style={{ whiteSpace: 'nowrap' }} onClick={() => setSleepStartMins(nowMins)}>Set to now</button>
 					</div>
 				</div>
+					</div>
+					</div>
 			</div>
 
 			{/* 2) Fall asleep time */}
