@@ -301,11 +301,11 @@ export default function App() {
         <li>
           Install the{' '}
           <a
-            href="https://www.icloud.com/shortcuts/c03903c8fe4746a8aa17ec99340fa663"
+            href="https://www.icloud.com/shortcuts/f60afe285a2547fc8a154056dca28595"
             target="_blank"
             rel="noopener noreferrer"
           >
-            remcalc Shortcut
+            remcalc Shortcut 
           </a>
         </li>
         <li>
