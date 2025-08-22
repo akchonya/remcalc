@@ -301,7 +301,7 @@ export default function App() {
         <li>
           Install the{' '}
           <a
-            href="https://www.icloud.com/shortcuts/f60afe285a2547fc8a154056dca28595"
+            href="https://www.icloud.com/shortcuts/240e96a0917a4a9b8a26a8c8c40ea501"
             target="_blank"
             rel="noopener noreferrer"
           >
