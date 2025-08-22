@@ -5,6 +5,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { TimePicker } from '@mui/x-date-pickers/TimePicker'
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material'
 
+
+
 function pad2(n: number): string { return String(n).padStart(2, '0') }
 
 function minutesToClockLabel(totalMinutes: number): string {
@@ -106,6 +108,7 @@ const theme = createTheme({
 })
 
 export default function App() {
+	const [showShortcutInfo, setShowShortcutInfo] = useState(false)
 	const nowMins = useNowMinutes()
 	const [sleepStartMins, setSleepStartMins] = useState<number>(nowMins)
 	const [fallAsleepMins, setFallAsleepMins] = useState<number>(15)
@@ -258,27 +261,73 @@ export default function App() {
 			</div>
 
 			<div className="card">
-				{/* <h3>4) Suggested alarm times</h3> */}
-				<div className="section results">
-					<div className="row">
-						<div className="time-display">
-							<span className="time-primary">Calculated alarm times</span>
-						</div>
-					</div>
-					{suggestions.map((s, idx) => (
-						<div key={idx} className="item">
-							<div>
-								<div className="time">{minutesToClockLabel(s.wakeMins)}</div>
-								<div className="meta">{s.n} × 90m cycles</div>
-							</div>
-							<div className="row">
-								<span className="pill pill-blue">{formatDuration(s.totalSleepMins)}</span>
-							</div>
-						</div>
-					))}
-					{/* <div className="footer-note">Tip: Many people also add a buffer (~10–20m) to account for waking up gently. Adjust using the minimum slider or fall-asleep time.</div> */}
+			<div className="section results">
+				<div className="row">
+				<div className="time-display" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+  <span className="time-primary">Calculated alarms</span>
+  <button
+    onClick={() => setShowShortcutInfo(true)}
+    className="info-icon"
+    aria-label="How to install Shortcut"
+  >
+    ℹ️
+  </button>
+</div>
 				</div>
+
+				{suggestions.map((s, idx) => {
+				const wakeTime = minutesToClockLabel(s.wakeMins) // e.g. "07:30"
+				const shortcutLink = `shortcuts://run-shortcut?name=remcalc&input=${encodeURIComponent(wakeTime)}`
+				return (
+					<div key={idx} className="item">
+					<div>
+						<div className="time">{wakeTime}</div>
+						<div className="meta">{s.n} × 90m cycles</div>
+					</div>
+					<div className="row" style={{ gap: 8, alignItems: "center" }}>
+						<span className="pill pill-darkblue">{formatDuration(s.totalSleepMins)}</span>
+						<a href={shortcutLink} className="pill pill-blue">
+						Set ⏰
+						</a>
+					</div>
+					</div>
+				)
+				})}
+				{showShortcutInfo && (
+  <div className="modal">
+    <div className="modal-content">
+      <h3>Enable Shortcut Alarms</h3>
+      <ol>
+        <li>
+          Install the{' '}
+          <a
+            href="https://www.icloud.com/shortcuts/c03903c8fe4746a8aa17ec99340fa663"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            remcalc Shortcut
+          </a>
+        </li>
+        <li>
+          In iOS: go to <b>Settings → Shortcuts → Allow Untrusted Shortcuts</b>
+        </li>
+        <li>
+          After that, the ⏰ buttons here will open your Clock app and set alarms.
+        </li>
+      </ol>
+	  <span
+  className="close-cross"
+  onClick={() => setShowShortcutInfo(false)}
+  aria-label="Close modal"
+>
+  ✖️
+</span>
+    </div>
+  </div>
+)}
 			</div>
+			</div>
+
 
 			{/* Fortune cookie */}
 			<div className="card">
